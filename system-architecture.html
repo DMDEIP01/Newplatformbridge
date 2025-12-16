@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Architecture Documentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            border-bottom: 4px solid #3498db;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ecf0f1;
+            font-size: 1.8em;
+        }
+
+        h3 {
+            color: #7f8c8d;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        h4 {
+            color: #95a5a6;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.9em;
+        }
+
+        th {
+            background: #3498db;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e8f4f8;
+        }
+
+        code {
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #e74c3c;
+        }
+
+        pre {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            line-height: 1.4;
+        }
+
+        .info-box {
+            background: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-right: 5px;
+        }
+
+        .badge-primary { background: #3498db; color: white; }
+        .badge-success { background: #28a745; color: white; }
+        .badge-warning { background: #ffc107; color: #333; }
+        .badge-danger { background: #e74c3c; color: white; }
+        .badge-info { background: #17a2b8; color: white; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+
+        .card h4 {
+            margin-top: 0;
+            color: #3498db;
+        }
+
+        .toc {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .toc h3 {
+            margin-top: 0;
+        }
+
+        .toc ul {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        .toc a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .toc a:hover {
+            text-decoration: underline;
+        }
+
+        .metadata {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .container {
+                box-shadow: none;
+                padding: 20px;
+            }
+
+            .toc {
+                page-break-after: always;
+            }
+
+            h2 {
+                page-break-before: always;
+            }
+
+            h2:first-of-type {
+                page-break-before: avoid;
+            }
+
+            table {
+                page-break-inside: avoid;
+            }
+
+            .card {
+                page-break-inside: avoid;
+            }
+        }
+
+        .checkmark {
+            color: #28a745;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>System Architecture Documentation</h1>
+        
+        <div class="metadata">
+            <strong>Project:</strong> Insurance/Warranty Management Platform<br>
+            <strong>Generated:</strong> December 11, 2024<br>
+            <strong>Project ID:</strong> ynphvrkktapgghzxjakp<br>
+            <strong>Technology:</strong> React + Lovable Cloud (Supabase)<br>
+            <strong>Edge Functions:</strong> 24 serverless functions<br>
+            <strong>Database Tables:</strong> 37 tables with Row-Level Security<br>
+            <strong>Database Functions:</strong> 19 custom functions<br>
+            <strong>Storage Buckets:</strong> 5 buckets (claim-receipts, policy-documents, claim-documents, promotion-logos, inspection-photos)
+        </div>
+
+        <div class="toc">
+            <h3>Table of Contents</h3>
+            <ul>
+                <li><a href="#overview">1. Project Overview</a></li>
+                <li><a href="#components">2. System Components</a></li>
+                <li><a href="#database">3. Database Schema</a></li>
+                <li><a href="#rls">4. Security & Access Control</a></li>
+                <li><a href="#functions">5. Database Functions</a></li>
+                <li><a href="#storage">6. Storage Buckets</a></li>
+                <li><a href="#edge">7. Edge Functions</a></li>
+                <li><a href="#auth">8. Authentication Flow</a></li>
+                <li><a href="#workflows">9. Business Workflows</a></li>
+                <li><a href="#tech">10. Technology Stack</a></li>
+                <li><a href="#deployment">11. Deployment Architecture</a></li>
+            </ul>
+        </div>
+
+        <div class="section" id="overview">
+            <h2>1. Project Overview</h2>
+            <p>
+                A comprehensive insurance and warranty management platform designed to handle the complete lifecycle 
+                of policies, claims, and customer service operations. The system supports multiple user roles including 
+                end customers, retail agents, claims handlers, complaint managers, and repair network partners.
+            </p>
+            
+            <div class="info-box">
+                <strong>Key Features:</strong>
+                <ul>
+                    <li>Multi-tenant program management with data isolation</li>
+                    <li>End-to-end claims processing with AI-powered analysis</li>
+                    <li>Automated policy document generation</li>
+                    <li>Repair network orchestration and fulfillment</li>
+                    <li>Customer service with AI chatbot support</li>
+                    <li>Complaint management system</li>
+                    <li>Role-based access control (RBAC)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section" id="components">
+            <h2>2. System Components</h2>
+            
+            <div class="grid">
+                <div class="card">
+                    <h4>Frontend Application</h4>
+                    <p><strong>Framework:</strong> React 18.3.1</p>
+                    <p><strong>Language:</strong> TypeScript</p>
+                    <p><strong>Routing:</strong> React Router DOM</p>
+                    <p><strong>UI:</strong> Shadcn/ui + Tailwind CSS</p>
+                    <p><strong>State:</strong> TanStack Query</p>
+                </div>
+
+                <div class="card">
+                    <h4>Backend (Lovable Cloud)</h4>
+                    <p><strong>Database:</strong> PostgreSQL 15+</p>
+                    <p><strong>Auth:</strong> Supabase Auth (JWT)</p>
+                    <p><strong>Storage:</strong> 5 Storage Buckets</p>
+                    <p><strong>Functions:</strong> Deno Edge Runtime</p>
+                    <p><strong>Real-time:</strong> WebSocket Support</p>
+                </div>
+
+                <div class="card">
+                    <h4>AI Integration</h4>
+                    <p><strong>Provider:</strong> Lovable AI</p>
+                    <p><strong>Models:</strong> Gemini 2.5 Pro/Flash</p>
+                    <p><strong>GPT:</strong> GPT-5, GPT-5 Mini</p>
+                    <p><strong>Capabilities:</strong> Image/Document Analysis, Chatbots</p>
+                </div>
+
+                <div class="card">
+                    <h4>External Services</h4>
+                    <p><strong>Email:</strong> SendGrid / Resend</p>
+                    <p><strong>AI Processing:</strong> Lovable AI API</p>
+                    <p><strong>Deployment:</strong> Lovable Platform</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="database">
+            <h2>3. Database Schema</h2>
+
+            <h3>Core Tables Overview</h3>
+
+            <h4>profiles</h4>
+            <p>User profile information linked to authentication system</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Column</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>id</code></td><td>uuid (PK)</td><td>References auth.users</td></tr>
+                    <tr><td><code>email</code></td><td>text</td><td>User email address (NOT NULL)</td></tr>
+                    <tr><td><code>full_name</code></td><td>text</td><td>User full name (NOT NULL)</td></tr>
+                    <tr><td><code>phone</code></td><td>text</td><td>Contact phone number</td></tr>
+                    <tr><td><code>address_line1</code></td><td>text</td><td>Primary address</td></tr>
+                    <tr><td><code>address_line2</code></td><td>text</td><td>Secondary address</td></tr>
+                    <tr><td><code>city</code></td><td>text</td><td>City</td></tr>
+                    <tr><td><code>postcode</code></td><td>text</td><td>Postal code</td></tr>
+                    <tr><td><code>repairer_id</code></td><td>uuid</td><td>Link to repairer if agent</td></tr>
+                    <tr><td><code>must_change_password</code></td><td>boolean</td><td>Force password reset flag</td></tr>
+                </tbody>
+            </table>
+
+            <h4>user_roles</h4>
+            <p>Multi-role authorization system with optional program scoping</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Column</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>id</code></td><td>uuid (PK)</td><td>Unique identifier</td></tr>
+                    <tr><td><code>user_id</code></td><td>uuid (FK)</td><td>References profiles</td></tr>
+                    <tr><td><code>role</code></td><td>app_role enum</td><td>User role assignment</td></tr>
+                    <tr><td><code>program_id</code></td><td>uuid (FK)</td><td>Optional program scope</td></tr>
+                </tbody>
+            </table>
+
+            <div class="info-box">
+                <strong>Supported Roles:</strong><br>
+                <span class="badge badge-danger">admin</span>
+                <span class="badge badge-primary">consultant</span>
+                <span class="badge badge-primary">retail_agent</span>
+                <span class="badge badge-primary">claims_agent</span>
+                <span class="badge badge-primary">complaints_agent</span>
+                <span class="badge badge-primary">repairer_agent</span>
+                <span class="badge badge-primary">commercial_agent</span>
+                <span class="badge badge-primary">backoffice_agent</span>
+                <span class="badge badge-warning">system_admin</span>
+            </div>
+
+            <h4>programs</h4>
+            <p>Multi-tenancy program management for data isolation</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Column</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>id</code></td><td>uuid (PK)</td><td>Unique identifier</td></tr>
+                    <tr><td><code>name</code></td><td>text</td><td>Program name (NOT NULL)</td></tr>
+                    <tr><td><code>description</code></td><td>text</td><td>Program description</td></tr>
+                    <tr><td><code>is_active</code></td><td>boolean</td><td>Active status (default: true)</td></tr>
+                    <tr><td><code>data_isolation_enabled</code></td><td>boolean</td><td>Enable data isolation (default: true)</td></tr>
+                    <tr><td><code>reference_formats</code></td><td>jsonb</td><td>Policy/claim number formats</td></tr>
+                    <tr><td><code>settings</code></td><td>jsonb</td><td>Program-specific settings</td></tr>
+                </tbody>
+            </table>
+
+            <h4>products</h4>
+            <p>Insurance/warranty product definitions with configurable parameters</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Column</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>id</code></td><td>uuid (PK)</td><td>Unique identifier</td></tr>
+                    <tr><td><code>product_id</code></td><td>text</td><td>Display ID (PRD-XXXXXX)</td></tr>
+                    <tr><td><code>name</code></td><td>text</td><td>Product name (NOT NULL)</td></tr>
+                    <tr><td><code>type</code></td><td>text</td><td>Product type (default: Standard)</td></tr>
+                    <tr><td><code>tier</code></td><td>integer</td><td>Tier level (1-3)</td></tr>
+                    <tr><td><code>coverage</code></td><td>text[]</td><td>Coverage types (NOT NULL)</td></tr>
+                    <tr><td><code>perils</code></td><td>text[]</td><td>Covered perils</td></tr>
+                    <tr><td><code>device_categories</code></td><td>text[]</td><td>Applicable device categories</td></tr>
+                    <tr><td><code>rrp_min</code></td><td>numeric</td><td>Minimum device price</td></tr>
+                    <tr><td><code>rrp_max</code></td><td>numeric</td><td>Maximum device price</td></tr>
+                    <tr><td><code>monthly_premium</code></td><td>numeric</td><td>Monthly premium amount</td></tr>
+                    <tr><td><code>excess_1</code></td><td>numeric</td><td>Primary excess amount</td></tr>
+                    <tr><td><code>excess_2</code></td><td>numeric</td><td>Secondary excess (if applicable)</td></tr>
+                    <tr><td><code>policy_term_years</code></td><td>integer</td><td>Policy term (default: 1)</td></tr>
+                    <tr><td><code>product_parameters</code></td><td>jsonb</td><td>Business rule parameters</td></tr>
+                    <tr><td><code>eligibility_rules</code></td><td>jsonb</td><td>Eligibility criteria</td></tr>
+                    <tr><td><code>validity_rules</code></td><td>jsonb</td><td>Validity conditions</td></tr>
+                    <tr><td><code>renewal_rules</code></td><td>jsonb</td><td>Renewal logic</td></tr>
+                </tbody>
+            </table>
+
+            <h4>policies</h4>
+            <p>Customer policy records with full customer and product details</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Column</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>id</code></td><td>uuid (PK)</td><td>Unique identifier</td></tr>
+                    <tr><td><code>policy_number</code></td><td>text</td><td>Auto-generated policy number</td></tr>
+                    <tr><td><code>user_id</code></td><td>uuid (FK)</td><td>References profiles</td></tr>
+                    <tr><td><code>product_id</code></td><td>uuid (FK)</td><td>References products</td></tr>
+                    <tr><td><code>program_id</code></td><td>uuid (FK)</td><td>References programs</td></tr>
+                    <tr><td><code>consultant_id</code></td><td>uuid (FK)</td><td>Selling consultant</td></tr>
+                    <tr><td><code>status</code></td><td>policy_status</td><td>active/cancelled/expired/pending</td></tr>
+                    <tr><td><code>start_date</code></td><td>date</td><td>Policy start date</td></tr>
+                    <tr><td><code>renewal_date</code></td><td>date</td><td>Renewal/expiry date</td></tr>
+                    <tr><td><code>customer_name</code></td><td>text</td><td>Customer full name</td></tr>
+                    <tr><td><code>customer_email</code></td><td>text</td><td>Customer email</td></tr>
+                    <tr><td><code>customer_phone</code></td><td>text</td><td>Customer phone</td></tr>
+                    <tr><td><code>customer_address_*</code></td><td>text</td><td>Customer address fields</td></tr>
+                    <tr><td><code>cancellation_reason</code></td><td>text</td><td>Reason for cancellation</td></tr>
+                    <tr><td><code>notes</code></td><td>text</td><td>Additional notes</td></tr>
+                </tbody>
+            </table>
+
+            <h4>claims</h4>
+            <p>Claim submissions with full lifecycle tracking</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Column</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>id</code></td><td>uuid (PK)</td><td>Unique identifier</td></tr>
+                    <tr><td><code>claim_number</code></td><td>text</td><td>Auto-generated claim number</td></tr>
+                    <tr><td><code>policy_id</code></td><td>uuid (FK)</td><td>References policies</td></tr>
+                    <tr><td><code>user_id</code></td><td>uuid (FK)</td><td>References profiles</td></tr>
+                    <tr><td><code>consultant_id</code></td><td>uuid (FK)</td><td>Handling consultant</td></tr>
+                    <tr><td><code>claim_type</code></td><td>claim_type enum</td><td>Type of claim</td></tr>
+                    <tr><td><code>status</code></td><td>claim_status enum</td><td>Current status</td></tr>
+                    <tr><td><code>description</code></td><td>text</td><td>Claim description (NOT NULL)</td></tr>
+                    <tr><td><code>product_condition</code></td><td>text</td><td>Device condition</td></tr>
+                    <tr><td><code>has_receipt</code></td><td>boolean</td><td>Receipt uploaded flag</td></tr>
+                    <tr><td><code>decision</code></td><td>text</td><td>Approve/Reject decision</td></tr>
+                    <tr><td><code>decision_reason</code></td><td>text</td><td>Reason for decision</td></tr>
+                    <tr><td><code>submitted_date</code></td><td>timestamp</td><td>Submission timestamp</td></tr>
+                </tbody>
+            </table>
+
+            <div class="info-box">
+                <strong>Claim Types:</strong><br>
+                <span class="badge badge-danger">accidental_damage</span>
+                <span class="badge badge-danger">theft</span>
+                <span class="badge badge-danger">loss</span>
+                <span class="badge badge-warning">breakdown</span>
+                <span class="badge badge-info">liquid_damage</span>
+                <span class="badge badge-info">screen_damage</span>
+            </div>
+
+            <div class="info-box">
+                <strong>Claim Statuses:</strong><br>
+                <span class="badge badge-info">notified</span>
+                <span class="badge badge-warning">under_review</span>
+                <span class="badge badge-success">approved</span>
+                <span class="badge badge-danger">rejected</span>
+                <span class="badge badge-primary">fulfilled</span>
+                <span class="badge badge-primary">closed</span>
+            </div>
+
+            <h4>claim_fulfillment</h4>
+            <p>Fulfillment workflow orchestration and tracking</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Column</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>id</code></td><td>uuid (PK)</td><td>Unique identifier</td></tr>
+                    <tr><td><code>claim_id</code></td><td>uuid (FK)</td><td>References claims</td></tr>
+                    <tr><td><code>repairer_id</code></td><td>uuid (FK)</td><td>Assigned repairer</td></tr>
+                    <tr><td><code>status</code></td><td>text</td><td>Fulfillment status</td></tr>
+                    <tr><td><code>fulfillment_type</code></td><td>text</td><td>repair/replace/voucher/ber</td></tr>
+                    <tr><td><code>excess_amount</code></td><td>numeric</td><td>Excess to collect</td></tr>
+                    <tr><td><code>excess_paid</code></td><td>boolean</td><td>Payment received flag</td></tr>
+                    <tr><td><code>device_value</code></td><td>numeric</td><td>Device replacement value</td></tr>
+                    <tr><td><code>quote_status</code></td><td>text</td><td>Quote approval status</td></tr>
+                    <tr><td><code>quote_amount</code></td><td>numeric</td><td>Repair quote amount</td></tr>
+                    <tr><td><code>appointment_date</code></td><td>timestamp</td><td>Scheduled appointment</td></tr>
+                    <tr><td><code>repair_outcome</code></td><td>text</td><td>Final outcome</td></tr>
+                    <tr><td><code>inspection_photos</code></td><td>text[]</td><td>Photo URLs</td></tr>
+                    <tr><td><code>engineer_reference</code></td><td>text</td><td>Engineer job reference</td></tr>
+                </tbody>
+            </table>
+
+            <h4>complaints</h4>
+            <p>Customer complaint management system</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Column</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>id</code></td><td>uuid (PK)</td><td>Unique identifier</td></tr>
+                    <tr><td><code>complaint_reference</code></td><td>text</td><td>CMP-YYYY-XXXXXX</td></tr>
+                    <tr><td><code>user_id</code></td><td>uuid (FK)</td><td>References profiles</td></tr>
+                    <tr><td><code>policy_id</code></td><td>uuid (FK)</td><td>Related policy</td></tr>
+                    <tr><td><code>reason</code></td><td>complaint_reason</td><td>Complaint category</td></tr>
+                    <tr><td><code>complaint_type</code></td><td>text</td><td>Type classification</td></tr>
+                    <tr><td><code>status</code></td><td>text</td><td>submitted/under_review/resolved</td></tr>
+                    <tr><td><code>details</code></td><td>text</td><td>Complaint details (NOT NULL)</td></tr>
+                    <tr><td><code>response</code></td><td>text</td><td>Agent response</td></tr>
+                    <tr><td><code>assigned_to</code></td><td>uuid (FK)</td><td>Assigned agent</td></tr>
+                    <tr><td><code>reviewed_by</code></td><td>uuid (FK)</td><td>Reviewing manager</td></tr>
+                </tbody>
+            </table>
+
+            <h4>service_requests</h4>
+            <p>Customer service inquiry and support ticket system</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Column</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>id</code></td><td>uuid (PK)</td><td>Unique identifier</td></tr>
+                    <tr><td><code>reference_number</code></td><td>text</td><td>SR-YYYY-XXXXXX</td></tr>
+                    <tr><td><code>user_id</code></td><td>uuid (FK)</td><td>References profiles</td></tr>
+                    <tr><td><code>policy_id</code></td><td>uuid (FK)</td><td>Related policy</td></tr>
+                    <tr><td><code>subject</code></td><td>text</td><td>Request subject (NOT NULL)</td></tr>
+                    <tr><td><code>category</code></td><td>text</td><td>Request category (NOT NULL)</td></tr>
+                    <tr><td><code>priority</code></td><td>text</td><td>low/medium/high (default: medium)</td></tr>
+                    <tr><td><code>status</code></td><td>text</td><td>open/in_progress/resolved (default: open)</td></tr>
+                    <tr><td><code>last_activity_at</code></td><td>timestamp</td><td>Last message timestamp</td></tr>
+                    <tr><td><code>resolved_by</code></td><td>uuid (FK)</td><td>Resolving agent</td></tr>
+                </tbody>
+            </table>
+
+            <h4>devices</h4>
+            <p>Device catalog for insurance eligibility and pricing</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Column</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>id</code></td><td>uuid (PK)</td><td>Unique identifier</td></tr>
+                    <tr><td><code>manufacturer</code></td><td>text</td><td>Device manufacturer (NOT NULL)</td></tr>
+                    <tr><td><code>model_name</code></td><td>text</td><td>Device model (NOT NULL)</td></tr>
+                    <tr><td><code>device_category</code></td><td>text</td><td>Category type (NOT NULL)</td></tr>
+                    <tr><td><code>rrp</code></td><td>numeric</td><td>Recommended retail price</td></tr>
+                    <tr><td><code>external_reference</code></td><td>text</td><td>External system reference</td></tr>
+                    <tr><td><code>include_in_promos</code></td><td>boolean</td><td>Eligible for promotions</td></tr>
+                </tbody>
+            </table>
+
+            <h4>repairers</h4>
+            <p>Authorized repair network partners</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Column</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>id</code></td><td>uuid (PK)</td><td>Unique identifier</td></tr>
+                    <tr><td><code>name</code></td><td>text</td><td>Repairer company name (NOT NULL)</td></tr>
+                    <tr><td><code>contact_name</code></td><td>text</td><td>Primary contact person</td></tr>
+                    <tr><td><code>email</code></td><td>text</td><td>Contact email (NOT NULL)</td></tr>
+                    <tr><td><code>phone</code></td><td>text</td><td>Contact phone</td></tr>
+                    <tr><td><code>address</code></td><td>text</td><td>Business address</td></tr>
+                    <tr><td><code>capabilities</code></td><td>text[]</td><td>Repair capabilities/specialties</td></tr>
+                    <tr><td><code>is_active</code></td><td>boolean</td><td>Active status (default: true)</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section" id="rls">
+            <h2>4. Security & Access Control</h2>
+
+            <h3>Row-Level Security (RLS) Overview</h3>
+            <p>
+                All tables are protected with Row-Level Security policies that enforce role-based access control. 
+                Users can only access data they own or are authorized to view based on their assigned roles.
+            </p>
+
+            <h3>Access Control Matrix</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Table</th>
+                        <th>Role</th>
+                        <th>SELECT</th>
+                        <th>INSERT</th>
+                        <th>UPDATE</th>
+                        <th>DELETE</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td rowspan="3"><strong>profiles</strong></td>
+                        <td>Own user</td>
+                        <td class="checkmark">✓</td>
+                        <td>-</td>
+                        <td class="checkmark">✓</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>retail_agent</td>
+                        <td class="checkmark">✓</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>system_admin</td>
+                        <td class="checkmark">✓</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+
+                    <tr>
+                        <td rowspan="5"><strong>policies</strong></td>
+                        <td>Own user</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>consultant</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓*</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>retail_agent</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>claims_agent</td>
+                        <td class="checkmark">✓</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>complaints_agent</td>
+                        <td class="checkmark">✓</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+
+                    <tr>
+                        <td rowspan="6"><strong>claims</strong></td>
+                        <td>Own user</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>consultant</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>retail_agent</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>claims_agent</td>
+                        <td class="checkmark">✓</td>
+                        <td>-</td>
+                        <td class="checkmark">✓</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>complaints_agent</td>
+                        <td class="checkmark">✓</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>repairer_agent</td>
+                        <td class="checkmark">✓</td>
+                        <td>-</td>
+                        <td class="checkmark">✓</td>
+                        <td>-</td>
+                    </tr>
+
+                    <tr>
+                        <td rowspan="3"><strong>complaints</strong></td>
+                        <td>Own user</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>consultant</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>complaints_agent</td>
+                        <td class="checkmark">✓</td>
+                        <td>-</td>
+                        <td class="checkmark">✓</td>
+                        <td>-</td>
+                    </tr>
+
+                    <tr>
+                        <td rowspan="5"><strong>service_requests</strong></td>
+                        <td>Own user</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>retail_agent</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>claims_agent</td>
+                        <td class="checkmark">✓</td>
+                        <td>-</td>
+                        <td class="checkmark">✓</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>commercial_agent</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>backoffice_agent</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td>-</td>
+                    </tr>
+
+                    <tr>
+                        <td rowspan="2"><strong>products</strong></td>
+                        <td>Anyone (authenticated)</td>
+                        <td class="checkmark">✓</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>system_admin</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                    </tr>
+
+                    <tr>
+                        <td rowspan="2"><strong>devices</strong></td>
+                        <td>Anyone (authenticated)</td>
+                        <td class="checkmark">✓</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>system_admin</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="warning-box">
+                <strong>Note:</strong> Consultants can only update policies assigned to them (where <code>consultant_id = auth.uid()</code>)
+            </div>
+        </div>
+
+        <div class="section" id="functions">
+            <h2>5. Database Functions</h2>
+
+            <h3>Auto-generation Functions</h3>
+
+            <h4>generate_policy_number(product_name text) RETURNS text</h4>
+            <p>Generates sequential policy numbers with product-specific prefix (EW/IL/IM) based on product name.</p>
+            <pre>Example: generate_policy_number('Extended Warranty Plus')
+Returns: 'EW-000123'</pre>
+
+            <h4>generate_claim_number(product_name text) RETURNS text</h4>
+            <p>Generates sequential claim numbers with product-specific prefix matching policy conventions.</p>
+            <pre>Example: generate_claim_number('Insurance Lite')
+Returns: 'IL-000045'</pre>
+
+            <h4>generate_service_request_reference() RETURNS text</h4>
+            <p>Generates service request reference numbers in format SR-YYYY-XXXXXX.</p>
+            <pre>Example: generate_service_request_reference()
+Returns: 'SR-2025-123456'</pre>
+
+            <h4>generate_complaint_reference() RETURNS text</h4>
+            <p>Generates complaint reference numbers in format CMP-YYYY-XXXXXX.</p>
+            <pre>Example: generate_complaint_reference()
+Returns: 'CMP-2025-654321'</pre>
+
+            <h3>Authorization Functions</h3>
+
+            <h4>has_role(_user_id uuid, _role app_role, _program_id uuid) RETURNS boolean</h4>
+            <p>Checks if a user has a specific role, optionally scoped to a program. Used extensively in RLS policies.</p>
+            <pre>Example: has_role(auth.uid(), 'admin'::app_role, NULL)
+Returns: true/false</pre>
+
+            <h4>has_section_access(_user_id uuid, _program_id uuid, _section retail_portal_section) RETURNS boolean</h4>
+            <p>Checks if a user has access to a specific section of the retail portal for a given program.</p>
+
+            <h3>Trigger Functions</h3>
+
+            <h4>handle_new_user()</h4>
+            <p>Automatically creates profile and links existing policies when a new user signs up.</p>
+
+            <h4>link_policy_to_existing_user()</h4>
+            <p>Automatically links policies to users when customer email matches existing user.</p>
+
+            <h4>update_updated_at_column()</h4>
+            <p>Updates the updated_at timestamp on record modifications.</p>
+
+            <h4>update_service_request_activity()</h4>
+            <p>Updates last_activity_at when new messages are added to service requests.</p>
+        </div>
+
+        <div class="section" id="storage">
+            <h2>6. Storage Buckets</h2>
+
+            <div class="grid">
+                <div class="card">
+                    <h4>claim-receipts</h4>
+                    <p><strong>Access:</strong> <span class="badge badge-danger">Private</span></p>
+                    <p><strong>Purpose:</strong> Purchase receipts for claims</p>
+                    <p><strong>RLS:</strong> User owns claim</p>
+                </div>
+
+                <div class="card">
+                    <h4>policy-documents</h4>
+                    <p><strong>Access:</strong> <span class="badge badge-danger">Private</span></p>
+                    <p><strong>Purpose:</strong> Generated policy documents</p>
+                    <p><strong>RLS:</strong> User owns policy</p>
+                </div>
+
+                <div class="card">
+                    <h4>claim-documents</h4>
+                    <p><strong>Access:</strong> <span class="badge badge-danger">Private</span></p>
+                    <p><strong>Purpose:</strong> Supporting claim documentation</p>
+                    <p><strong>RLS:</strong> User owns claim</p>
+                </div>
+
+                <div class="card">
+                    <h4>inspection-photos</h4>
+                    <p><strong>Access:</strong> <span class="badge badge-danger">Private</span></p>
+                    <p><strong>Purpose:</strong> Device inspection photos</p>
+                    <p><strong>RLS:</strong> User owns claim, repairer agents</p>
+                </div>
+
+                <div class="card">
+                    <h4>promotion-logos</h4>
+                    <p><strong>Access:</strong> <span class="badge badge-success">Public</span></p>
+                    <p><strong>Purpose:</strong> Promotional material images</p>
+                    <p><strong>RLS:</strong> Public read access</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="edge">
+            <h2>7. Edge Functions</h2>
+            <p>The platform includes 24 serverless edge functions running on Deno runtime.</p>
+
+            <h3>User Management (5 functions)</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Function</th>
+                        <th>Auth</th>
+                        <th>Purpose</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>manage-user</code></td>
+                        <td><span class="badge badge-danger">Required</span></td>
+                        <td>User management operations (create, update roles)</td>
+                    </tr>
+                    <tr>
+                        <td><code>create-consultant</code></td>
+                        <td><span class="badge badge-danger">Required</span></td>
+                        <td>Create new consultant users</td>
+                    </tr>
+                    <tr>
+                        <td><code>grant-consultant</code></td>
+                        <td><span class="badge badge-danger">Required</span></td>
+                        <td>Grant consultant role to user</td>
+                    </tr>
+                    <tr>
+                        <td><code>grant-role</code></td>
+                        <td><span class="badge badge-danger">Required</span></td>
+                        <td>Generic role assignment with user creation</td>
+                    </tr>
+                    <tr>
+                        <td><code>grant-system-admin</code></td>
+                        <td><span class="badge badge-danger">Required</span></td>
+                        <td>Grant system_admin role</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Communication (5 functions)</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Function</th>
+                        <th>Auth</th>
+                        <th>Purpose</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>send-email</code></td>
+                        <td><span class="badge badge-danger">Required</span></td>
+                        <td>Send custom emails via SendGrid/Resend</td>
+                    </tr>
+                    <tr>
+                        <td><code>send-templated-email</code></td>
+                        <td><span class="badge badge-danger">Required</span></td>
+                        <td>Send emails using predefined templates</td>
+                    </tr>
+                    <tr>
+                        <td><code>send-claim-document-request</code></td>
+                        <td><span class="badge badge-danger">Required</span></td>
+                        <td>Request documents from customers for claims</td>
+                    </tr>
+                    <tr>
+                        <td><code>resend-communication</code></td>
+                        <td><span class="badge badge-danger">Required</span></td>
+                        <td>Resend previously sent communications</td>
+                    </tr>
+                    <tr>
+                        <td><code>regenerate-communications</code></td>
+                        <td><span class="badge badge-danger">Required</span></td>
+                        <td>Regenerate policy communications</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Document Processing (3 functions)</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Function</th>
+                        <th>Auth</th>
+                        <th>Purpose</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>generate-policy-documents</code></td>
+                        <td><span class="badge badge-danger">Required</span></td>
+                        <td>Generate PDF policy documents (IPID, T&C, Schedule)</td>
+                    </tr>
+                    <tr>
+                        <td><code>upload-claim-document</code></td>
+                        <td><span class="badge badge-success">Public</span></td>
+                        <td>Handle claim document uploads with AI analysis</td>
+                    </tr>
+                    <tr>
+                        <td><code>get-claim-upload-details</code></td>
+                        <td><span class="badge badge-success">Public</span></td>
+                        <td>Get claim details for document upload pages</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>AI-Powered Functions (6 functions)</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Function</th>
+                        <th>AI Model</th>
+                        <th>Purpose</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>analyze-damage</code></td>
+                        <td>Gemini 2.5 Flash</td>
+                        <td>AI analysis of damage photos</td>
+                    </tr>
+                    <tr>
+                        <td><code>analyze-device</code></td>
+                        <td>Gemini 2.5 Flash</td>
+                        <td>AI analysis of device photos</td>
+                    </tr>
+                    <tr>
+                        <td><code>analyze-receipt</code></td>
+                        <td>Gemini 2.5 Flash</td>
+                        <td>OCR and validation of purchase receipts</td>
+                    </tr>
+                    <tr>
+                        <td><code>claims-fulfillment-advisor</code></td>
+                        <td>Gemini 2.5 Pro</td>
+                        <td>AI-powered fulfillment recommendations</td>
+                    </tr>
+                    <tr>
+                        <td><code>service-agent</code></td>
+                        <td>GPT-5 Mini</td>
+                        <td>AI chatbot for service requests</td>
+                    </tr>
+                    <tr>
+                        <td><code>extract-branding</code></td>
+                        <td>Gemini 2.5 Flash</td>
+                        <td>Extract branding colors from logos</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Claims Processing (3 functions)</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Function</th>
+                        <th>Auth</th>
+                        <th>Purpose</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>process-claim-automatically</code></td>
+                        <td><span class="badge badge-danger">Required</span></td>
+                        <td>Auto-process claims using AI decision logic</td>
+                    </tr>
+                    <tr>
+                        <td><code>reanalyze-claim-documents</code></td>
+                        <td><span class="badge badge-danger">Required</span></td>
+                        <td>Re-run AI analysis on claim documents</td>
+                    </tr>
+                    <tr>
+                        <td><code>retail-policy-lookup</code></td>
+                        <td><span class="badge badge-danger">Required</span></td>
+                        <td>Search policies by various criteria</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Utilities (2 functions)</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Function</th>
+                        <th>Auth</th>
+                        <th>Purpose</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>seed-demo-data</code></td>
+                        <td><span class="badge badge-danger">Required</span></td>
+                        <td>Seed demonstration data for testing</td>
+                    </tr>
+                    <tr>
+                        <td><code>seed-retail-data</code></td>
+                        <td><span class="badge badge-success">Not Required</span></td>
+                        <td>Seed retail portal demo data</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section" id="auth">
+            <h2>8. Authentication Flow</h2>
+
+            <div class="success-box">
+                <h4>Authentication Process</h4>
+                <ol>
+                    <li>User visits <code>/auth</code> (end users) or <code>/retail/auth</code> (staff)</li>
+                    <li>Enters credentials (email + password)</li>
+                    <li>Supabase Auth validates credentials</li>
+                    <li>On success:
+                        <ul>
+                            <li>JWT token issued with user ID and email</li>
+                            <li>Session stored in localStorage for persistence</li>
+                            <li>User redirected based on role:
+                                <ul>
+                                    <li>End users → <code>/dashboard</code></li>
+                                    <li>Staff users → <code>/retail/dashboard</code></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>Protected routes check:
+                        <ul>
+                            <li>Valid session exists</li>
+                            <li>User has required role(s)</li>
+                            <li>RLS policies enforce data access at database level</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+
+            <h3>Role Assignment</h3>
+            <ul>
+                <li>Roles stored in <code>user_roles</code> table</li>
+                <li>Multiple roles per user supported</li>
+                <li>Program-scoped roles available for multi-tenancy</li>
+                <li>System admin role bypasses most restrictions</li>
+            </ul>
+
+            <h3>Session Management</h3>
+            <ul>
+                <li>Auto-refresh enabled for JWT tokens</li>
+                <li>Sessions persist across browser sessions via localStorage</li>
+                <li>Sign out uses global scope to revoke all tokens</li>
+            </ul>
+        </div>
+
+        <div class="section" id="workflows">
+            <h2>9. Business Workflows</h2>
+
+            <h3>1. Policy Sale Workflow</h3>
+            <div class="info-box">
+                <strong>Steps:</strong>
+                <ol>
+                    <li>Retail Agent selects product from catalog</li>
+                    <li>Enters customer details and device information</li>
+                    <li>Applies promotion code (optional)</li>
+                    <li>System generates unique policy number</li>
+                    <li>Creates policy record in database</li>
+                    <li>Generates policy documents from templates</li>
+                    <li>Sends welcome email with policy documents</li>
+                    <li>Links policy to existing user (if email matches)</li>
+                </ol>
+            </div>
+
+            <h3>2. Claim Submission Workflow</h3>
+            <div class="info-box">
+                <strong>Steps:</strong>
+                <ol>
+                    <li>User or Agent submits claim with description</li>
+                    <li>Uploads receipt/purchase proof (if required)</li>
+                    <li>Uploads damage/device photos</li>
+                    <li>AI analyzes photos for damage assessment</li>
+                    <li>System validates claim against policy rules</li>
+                    <li>Status set to "Notified"</li>
+                    <li>Claims Agent reviews submission</li>
+                    <li>Makes decision (approve/reject/request more info)</li>
+                    <li>If approved: Routes to fulfillment workflow</li>
+                    <li>If rejected: Sends rejection notification with reason</li>
+                </ol>
+            </div>
+
+            <h3>3. Claim Fulfillment Workflow</h3>
+            <div class="info-box">
+                <strong>Steps:</strong>
+                <ol>
+                    <li>Approved claim enters fulfillment queue</li>
+                    <li>System matches repairer based on:
+                        <ul>
+                            <li>Device type and manufacturer</li>
+                            <li>Geographic location</li>
+                            <li>Repairer capabilities</li>
+                        </ul>
+                    </li>
+                    <li>Collects excess payment from customer</li>
+                    <li>Schedules appointment with repairer</li>
+                    <li>Repairer inspects device</li>
+                    <li>Provides quote (if repair needed)</li>
+                    <li>Customer approves quote</li>
+                    <li>Repairer performs repair/replacement</li>
+                    <li>Or issues voucher if BER (Beyond Economic Repair)</li>
+                    <li>Updates claim status to "Fulfilled"</li>
+                    <li>Closes claim</li>
+                </ol>
+            </div>
+
+            <h3>4. Complaint Handling Workflow</h3>
+            <div class="info-box">
+                <strong>Steps:</strong>
+                <ol>
+                    <li>User or Agent submits complaint</li>
+                    <li>System auto-assigns unique reference (CMP-YYYY-XXXXXX)</li>
+                    <li>Complaint routed to complaints queue</li>
+                    <li>Complaints Agent reviews and classifies</li>
+                    <li>Assigns to appropriate handler</li>
+                    <li>Agent investigates and responds</li>
+                    <li>Tracks all actions in activity log</li>
+                    <li>Marks complaint as resolved</li>
+                    <li>Sends resolution notification to customer</li>
+                </ol>
+            </div>
+
+            <h3>5. Service Request Workflow</h3>
+            <div class="info-box">
+                <strong>Steps:</strong>
+                <ol>
+                    <li>User creates service request with subject/category</li>
+                    <li>System generates reference (SR-YYYY-XXXXXX)</li>
+                    <li>AI Agent provides initial automated response</li>
+                    <li>If issue unresolved: Routes to human agent</li>
+                    <li>Agent engages in back-and-forth conversation</li>
+                    <li>Tracks messages and activity timestamps</li>
+                    <li>Resolves request when completed</li>
+                    <li>Closes request and sends confirmation</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="section" id="tech">
+            <h2>10. Technology Stack</h2>
+
+            <h3>Frontend Technologies</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Technology</th>
+                        <th>Version</th>
+                        <th>Purpose</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>React</td><td>18.3.1</td><td>UI framework</td></tr>
+                    <tr><td>TypeScript</td><td>5.x</td><td>Type safety</td></tr>
+                    <tr><td>Vite</td><td>Latest</td><td>Build tool</td></tr>
+                    <tr><td>Tailwind CSS</td><td>3.x</td><td>Styling</td></tr>
+                    <tr><td>React Router DOM</td><td>6.30</td><td>Routing</td></tr>
+                    <tr><td>TanStack Query</td><td>5.83</td><td>Server state management</td></tr>
+                    <tr><td>Shadcn/ui</td><td>Latest</td><td>Component library</td></tr>
+                    <tr><td>Radix UI</td><td>Latest</td><td>Primitive components</td></tr>
+                    <tr><td>Lucide React</td><td>0.462</td><td>Icons</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Backend Technologies</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Technology</th>
+                        <th>Version</th>
+                        <th>Purpose</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>PostgreSQL</td><td>15+</td><td>Primary database</td></tr>
+                    <tr><td>Supabase Auth</td><td>Latest</td><td>Authentication</td></tr>
+                    <tr><td>Supabase Storage</td><td>Latest</td><td>File storage</td></tr>
+                    <tr><td>Deno</td><td>Latest</td><td>Edge function runtime</td></tr>
+                    <tr><td>SendGrid</td><td>API v3</td><td>Email delivery</td></tr>
+                    <tr><td>Resend</td><td>Latest</td><td>Email alternative</td></tr>
+                </tbody>
+            </table>
+
+            <h3>AI & ML Services</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Service</th>
+                        <th>Models</th>
+                        <th>Use Cases</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Lovable AI</td>
+                        <td>Gemini 2.5 Pro, Gemini 2.5 Flash</td>
+                        <td>Image analysis, document OCR</td>
+                    </tr>
+                    <tr>
+                        <td>Lovable AI</td>
+                        <td>GPT-5, GPT-5 Mini, GPT-5 Nano</td>
+                        <td>Chatbots, text processing</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section" id="deployment">
+            <h2>11. Deployment Architecture</h2>
+
+            <pre>
+┌─────────────────────────────────────────────────────┐
+│                 Client Browser                       │
+│   React SPA (Lovable/Vercel/Custom domain)         │
+└─────────────────┬───────────────────────────────────┘
+                  │ HTTPS (TLS 1.3)
+                  │
+┌─────────────────▼───────────────────────────────────┐
+│          Lovable Cloud (Supabase)                    │
+│  ┌──────────────────────────────────────────────┐  │
+│  │  PostgreSQL Database                         │  │
+│  │  - RLS Policies                              │  │
+│  │  - Database Functions                        │  │
+│  │  - Triggers & Sequences                      │  │
+│  └──────────────────────────────────────────────┘  │
+│  ┌──────────────────────────────────────────────┐  │
+│  │  Supabase Auth                               │  │
+│  │  - JWT Token Management                      │  │
+│  │  - Session Handling                          │  │
+│  └──────────────────────────────────────────────┘  │
+│  ┌──────────────────────────────────────────────┐  │
+│  │  Storage Buckets (CDN-backed)                │  │
+│  │  - claim-receipts                            │  │
+│  │  - policy-documents                          │  │
+│  │  - claim-documents                           │  │
+│  │  - inspection-photos                         │  │
+│  │  - promotion-logos                           │  │
+│  └──────────────────────────────────────────────┘  │
+│  ┌──────────────────────────────────────────────┐  │
+│  │  Edge Functions (Deno)                       │  │
+│  │  - User Management                           │  │
+│  │  - AI Analysis                               │  │
+│  │  - Email Dispatch                            │  │
+│  │  - Document Generation                       │  │
+│  └──────────────────────────────────────────────┘  │
+└─────────────────┬───────────────────────────────────┘
+                  │ API Calls
+                  │
+┌─────────────────▼───────────────────────────────────┐
+│             External Services                        │
+│  - Lovable AI (Gemini/GPT models)                   │
+│  - SendGrid (Email delivery)                         │
+│  - Resend (Email alternative)                        │
+└─────────────────────────────────────────────────────┘
+            </pre>
+
+            <h3>Environment Configuration</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Variable</th>
+                        <th>Purpose</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>VITE_SUPABASE_URL</code></td><td>Supabase project URL</td></tr>
+                    <tr><td><code>VITE_SUPABASE_PUBLISHABLE_KEY</code></td><td>Anonymous/public key</td></tr>
+                    <tr><td><code>VITE_SUPABASE_PROJECT_ID</code></td><td>Project identifier</td></tr>
+                    <tr><td><code>SUPABASE_SERVICE_ROLE_KEY</code></td><td>Admin operations key</td></tr>
+                    <tr><td><code>SUPABASE_DB_URL</code></td><td>Direct database connection</td></tr>
+                    <tr><td><code>SENDGRID_API_KEY</code></td><td>SendGrid authentication</td></tr>
+                    <tr><td><code>RESEND_API_KEY</code></td><td>Resend authentication</td></tr>
+                    <tr><td><code>LOVABLE_API_KEY</code></td><td>Lovable AI access</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Performance Optimizations</h3>
+            <ul>
+                <li><strong>Database:</strong> Automatic indexing on foreign keys and frequently queried fields</li>
+                <li><strong>RLS:</strong> Efficient role checking via <code>has_role()</code> function</li>
+                <li><strong>Caching:</strong> TanStack Query caches API responses client-side</li>
+                <li><strong>Real-time:</strong> Selective subscriptions to reduce overhead</li>
+                <li><strong>Storage:</strong> CDN-backed buckets for fast global delivery</li>
+                <li><strong>Edge Functions:</strong> Deployed globally for low latency</li>
+            </ul>
+
+            <h3>Backup & Monitoring</h3>
+            <ul>
+                <li>Automated daily database backups (Supabase managed)</li>
+                <li>Point-in-time recovery available</li>
+                <li>Edge function logs accessible via Cloud console</li>
+                <li>Database query logs via <code>postgres_logs</code></li>
+                <li>Auth logs via <code>auth_logs</code></li>
+                <li>Export capabilities for all tables</li>
+            </ul>
+        </div>
+
+        <div class="metadata" style="margin-top: 60px; border-top: 2px solid #ecf0f1; padding-top: 20px;">
+            <strong>Document Generated:</strong> December 4, 2024<br>
+            <strong>Project ID:</strong> ynphvrkktapgghzxjakp<br>
+            <strong>Platform:</strong> Lovable Cloud<br>
+            <strong>Last Updated:</strong> December 4, 2024
+        </div>
+    </div>
+</body>
+</html>
