@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Architecture Diagrams</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            border-bottom: 4px solid #3498db;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        h2 {
+            color: #34495e;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ecf0f1;
+            font-size: 1.8em;
+        }
+
+        h3 {
+            color: #7f8c8d;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .diagram-container {
+            background: white;
+            padding: 30px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        .mermaid {
+            text-align: center;
+            background: white;
+        }
+
+        .description {
+            background: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .metadata {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .legend {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .legend-item {
+            display: inline-block;
+            margin: 5px 15px 5px 0;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .toc {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .toc h3 {
+            margin-top: 0;
+        }
+
+        .toc ul {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        .toc a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .toc a:hover {
+            text-decoration: underline;
+        }
+
+        /* Download buttons */
+        .download-toolbar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .download-btn.png {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .download-btn.svg {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+        }
+
+        .download-btn.pdf {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .download-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .download-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Download all section */
+        .download-all-section {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .download-all-section h3 {
+            color: white;
+            margin: 0;
+        }
+
+        .download-all-section p {
+            color: rgba(255,255,255,0.8);
+            margin: 5px 0 0 0;
+            font-size: 14px;
+        }
+
+        .download-all-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .download-all-btn {
+            padding: 10px 20px;
+            background: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .download-all-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .download-all-btn.all-png {
+            color: #3498db;
+        }
+
+        .download-all-btn.all-svg {
+            color: #2ecc71;
+        }
+
+        .download-all-btn.all-pdf {
+            color: #e74c3c;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .container {
+                box-shadow: none;
+                padding: 20px;
+            }
+
+            .diagram-container {
+                page-break-inside: avoid;
+            }
+
+            h2 {
+                page-break-before: always;
+            }
+
+            h2:first-of-type {
+                page-break-before: avoid;
+            }
+
+            .download-toolbar,
+            .download-all-section {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>System Architecture Diagrams</h1>
+        
+        <div class="metadata">
+            <strong>Project:</strong> Insurance/Warranty Management Platform<br>
+            <strong>Generated:</strong> December 11, 2024<br>
+            <strong>Technology:</strong> React + Lovable Cloud (Supabase)<br>
+            <strong>Edge Functions:</strong> 24 serverless functions<br>
+            <strong>Database Tables:</strong> 37 tables with RLS<br>
+            <strong>Database Functions:</strong> 19 custom functions<br>
+            <strong>Storage Buckets:</strong> 5 buckets
+        </div>
+
+        <!-- Download All Section -->
+        <div class="download-all-section">
+            <div>
+                <h3>📥 Download All Diagrams</h3>
+                <p>Export all 9 diagrams at once in your preferred format</p>
+            </div>
+            <div class="download-all-buttons">
+                <button class="download-all-btn all-png" onclick="downloadAll('png')">All as PNG</button>
+                <button class="download-all-btn all-svg" onclick="downloadAll('svg')">All as SVG</button>
+                <button class="download-all-btn all-pdf" onclick="downloadAll('pdf')">All as PDF</button>
+            </div>
+        </div>
+
+        <div class="toc">
+            <h3>Diagram Index</h3>
+            <ul>
+                <li><a href="#system-overview">1. High-Level System Architecture</a></li>
+                <li><a href="#database-er">2. Database Entity Relationship Diagram</a></li>
+                <li><a href="#auth-flow">3. Authentication & Authorization Flow</a></li>
+                <li><a href="#claim-workflow">4. Claims Processing Workflow</a></li>
+                <li><a href="#fulfillment-flow">5. Fulfillment Orchestration Flow</a></li>
+                <li><a href="#service-request">6. Service Request Flow</a></li>
+                <li><a href="#user-roles">7. User Roles & Permissions</a></li>
+                <li><a href="#data-flow">8. Data Flow Architecture</a></li>
+                <li><a href="#customer-portal-flow">9. Customer Portal User Flow</a></li>
+            </ul>
+        </div>
+
+        <div id="system-overview">
+            <h2>1. High-Level System Architecture</h2>
+            <div class="description">
+                <p><strong>Overview:</strong> This diagram shows the complete system architecture including the React frontend, Lovable Cloud backend (Supabase), and external service integrations.</p>
+            </div>
+            <div class="diagram-container" data-diagram-name="system-architecture">
+                <div class="download-toolbar">
+                    <button class="download-btn png" onclick="downloadDiagram(this, 'png')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        PNG
+                    </button>
+                    <button class="download-btn svg" onclick="downloadDiagram(this, 'svg')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        SVG
+                    </button>
+                    <button class="download-btn pdf" onclick="downloadDiagram(this, 'pdf')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        PDF
+                    </button>
+                </div>
+                <div class="mermaid">
+graph TB
+    subgraph "Client Layer"
+        A[Web Browser]
+        B[React SPA<br/>TypeScript + Vite]
+        C[React Router]
+        D[TanStack Query<br/>State Management]
+        E[Shadcn/ui Components]
+    end
+
+    subgraph "Lovable Cloud - Supabase"
+        F[API Gateway<br/>REST + GraphQL]
+        G[PostgreSQL Database<br/>with RLS]
+        H[Authentication<br/>JWT Tokens]
+        I[Storage Buckets<br/>5 Buckets]
+        J[Edge Functions<br/>Deno Runtime]
+        K[Real-time<br/>WebSockets]
+    end
+
+    subgraph "External Services"
+        L[Lovable AI<br/>Gemini 2.5 Pro/Flash<br/>GPT-5 Models]
+        M[SendGrid<br/>Email Delivery]
+        N[Resend<br/>Email Alternative]
+    end
+
+    subgraph "Edge Functions"
+        J1[User Management]
+        J2[AI Analysis]
+        J3[Email Dispatch]
+        J4[Document Generation]
+        J5[Policy Lookup]
+    end
+
+    A --> B
+    B --> C
+    B --> D
+    B --> E
+    
+    D --> F
+    F --> G
+    F --> H
+    F --> I
+    F --> J
+    F --> K
+    
+    J --> J1
+    J --> J2
+    J --> J3
+    J --> J4
+    J --> J5
+    
+    J2 --> L
+    J3 --> M
+    J3 --> N
+    J4 --> L
+
+    style A fill:#e8f4f8
+    style B fill:#3498db,color:#fff
+    style G fill:#2ecc71,color:#fff
+    style H fill:#e74c3c,color:#fff
+    style L fill:#f39c12,color:#fff
+    style M fill:#9b59b6,color:#fff
+                </div>
+            </div>
+        </div>
+
+        <div id="database-er">
+            <h2>2. Database Entity Relationship Diagram</h2>
+            <div class="description">
+                <p><strong>Overview:</strong> Core database schema showing relationships between users, policies, claims, and fulfillment entities.</p>
+            </div>
+            <div class="diagram-container" data-diagram-name="database-er">
+                <div class="download-toolbar">
+                    <button class="download-btn png" onclick="downloadDiagram(this, 'png')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        PNG
+                    </button>
+                    <button class="download-btn svg" onclick="downloadDiagram(this, 'svg')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        SVG
+                    </button>
+                    <button class="download-btn pdf" onclick="downloadDiagram(this, 'pdf')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        PDF
+                    </button>
+                </div>
+                <div class="mermaid">
+erDiagram
+    PROFILES ||--o{ USER_ROLES : has
+    PROFILES ||--o{ POLICIES : owns
+    PROFILES ||--o{ CLAIMS : submits
+    PROFILES ||--o{ COMPLAINTS : files
+    PROFILES ||--o{ SERVICE_REQUESTS : creates
+    
+    PROGRAMS ||--o{ PROGRAM_PRODUCTS : contains
+    PROGRAMS ||--o{ USER_ROLES : scopes
+    
+    PRODUCTS ||--o{ PROGRAM_PRODUCTS : "belongs to"
+    PRODUCTS ||--o{ POLICIES : "covers"
+    PRODUCTS ||--o{ PRODUCT_PROMOTIONS : "has"
+    
+    POLICIES ||--o{ CLAIMS : "generates"
+    POLICIES ||--o{ POLICY_COMMUNICATIONS : "receives"
+    POLICIES ||--o{ POLICY_CHANGE_HISTORY : "tracks"
+    POLICIES ||--o{ COVERED_ITEMS : "includes"
+    POLICIES ||--o{ DOCUMENTS : "has"
+    POLICIES ||--o{ PAYMENTS : "records"
+    
+    CLAIMS ||--|| CLAIM_FULFILLMENT : "routes to"
+    CLAIMS ||--o{ CLAIM_STATUS_HISTORY : "tracks"
+    CLAIMS ||--o{ DOCUMENTS : "attaches"
+    
+    CLAIM_FULFILLMENT ||--o{ REPAIR_COSTS : "incurs"
+    CLAIM_FULFILLMENT }o--|| REPAIRERS : "assigned to"
+    
+    REPAIRERS ||--o{ FULFILLMENT_ASSIGNMENTS : "handles"
+    REPAIRERS ||--o{ REPAIRER_SLAS : "maintains"
+    
+    SERVICE_REQUESTS ||--o{ SERVICE_REQUEST_MESSAGES : "contains"
+    
+    PROMOTIONS ||--o{ PRODUCT_PROMOTIONS : "applies to"
+    
+    PERILS ||--o{ PRODUCTS : "covers"
+    DEVICES ||--o{ PRODUCTS : "eligible for"
+
+    PROFILES {
+        uuid id PK
+        text email UK
+        text full_name
+        text phone
+        uuid repairer_id FK
+    }
+
+    USER_ROLES {
+        uuid id PK
+        uuid user_id FK
+        app_role role
+        uuid program_id FK
+    }
+
+    PROGRAMS {
+        uuid id PK
+        text name
+        boolean is_active
+        boolean data_isolation_enabled
+        jsonb reference_formats
+    }
+
+    PRODUCTS {
+        uuid id PK
+        text product_id UK
+        text name
+        numeric monthly_premium
+        numeric excess_1
+        jsonb product_parameters
+    }
+
+    POLICIES {
+        uuid id PK
+        text policy_number UK
+        uuid user_id FK
+        uuid product_id FK
+        policy_status status
+        date start_date
+        date renewal_date
+    }
+
+    CLAIMS {
+        uuid id PK
+        text claim_number UK
+        uuid policy_id FK
+        uuid user_id FK
+        claim_type type
+        claim_status status
+        text description
+    }
+
+    CLAIM_FULFILLMENT {
+        uuid id PK
+        uuid claim_id FK
+        uuid repairer_id FK
+        text status
+        text fulfillment_type
+        numeric excess_amount
+    }
+
+    REPAIRERS {
+        uuid id PK
+        text name
+        text email
+        text capabilities
+        boolean is_active
+    }
+
+    SERVICE_REQUESTS {
+        uuid id PK
+        text reference_number UK
+        uuid user_id FK
+        uuid policy_id FK
+        text status
+    }
+
+    COMPLAINTS {
+        uuid id PK
+        text complaint_reference UK
+        uuid user_id FK
+        uuid policy_id FK
+        text status
+    }
+                </div>
+            </div>
+        </div>
+
+        <div id="auth-flow">
+            <h2>3. Authentication & Authorization Flow</h2>
+            <div class="description">
+                <p><strong>Overview:</strong> Complete authentication flow from login to authorized API access with role-based security.</p>
+            </div>
+            <div class="diagram-container" data-diagram-name="auth-flow">
+                <div class="download-toolbar">
+                    <button class="download-btn png" onclick="downloadDiagram(this, 'png')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        PNG
+                    </button>
+                    <button class="download-btn svg" onclick="downloadDiagram(this, 'svg')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        SVG
+                    </button>
+                    <button class="download-btn pdf" onclick="downloadDiagram(this, 'pdf')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        PDF
+                    </button>
+                </div>
+                <div class="mermaid">
+sequenceDiagram
+    actor User
+    participant UI as React App
+    participant Auth as Supabase Auth
+    participant DB as PostgreSQL
+    participant RLS as RLS Policies
+    participant API as Protected API
+
+    User->>UI: Enter credentials
+    UI->>Auth: signInWithPassword()
+    Auth->>DB: Validate credentials
+    DB-->>Auth: User found
+    Auth->>DB: Check user_roles table
+    DB-->>Auth: Return roles
+    Auth-->>UI: JWT Token + Session
+    UI->>UI: Store in localStorage
+    UI->>UI: Redirect based on role
+    
+    Note over User,API: Accessing Protected Data
+    
+    User->>UI: Request data
+    UI->>API: API call with JWT
+    API->>Auth: Verify JWT
+    Auth-->>API: Token valid + user_id
+    API->>RLS: Query with auth.uid()
+    RLS->>DB: has_role(user_id, role)
+    DB-->>RLS: Role verified
+    RLS-->>API: Filtered data
+    API-->>UI: Response
+    UI-->>User: Display data
+    
+    Note over User,API: Sign Out
+    
+    User->>UI: Click sign out
+    UI->>Auth: signOut({scope: 'global'})
+    Auth->>Auth: Revoke all tokens
+    Auth-->>UI: Success
+    UI->>UI: Clear localStorage
+    UI-->>User: Redirect to login
+                </div>
+            </div>
+        </div>
+
+        <div id="claim-workflow">
+            <h2>4. Claims Processing Workflow</h2>
+            <div class="description">
+                <p><strong>Overview:</strong> End-to-end claims submission and processing workflow including AI analysis and decision-making.</p>
+            </div>
+            <div class="diagram-container" data-diagram-name="claims-workflow">
+                <div class="download-toolbar">
+                    <button class="download-btn png" onclick="downloadDiagram(this, 'png')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        PNG
+                    </button>
+                    <button class="download-btn svg" onclick="downloadDiagram(this, 'svg')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        SVG
+                    </button>
+                    <button class="download-btn pdf" onclick="downloadDiagram(this, 'pdf')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        PDF
+                    </button>
+                </div>
+                <div class="mermaid">
+flowchart TD
+    Start([User/Agent Submits Claim]) --> A[Enter Claim Details]
+    A --> B{Has Receipt?}
+    B -->|Yes| C[Upload Receipt]
+    B -->|No| D[Upload Device Photos]
+    C --> D
+    D --> E[Upload Damage Photos]
+    E --> F[AI Analysis: analyze-device]
+    F --> G[AI Analysis: analyze-damage]
+    G --> H[Generate Claim Number]
+    H --> I[Create Claim Record]
+    I --> J[Set Status: Notified]
+    J --> K[Notify Claims Agent]
+    
+    K --> L{Agent Review}
+    L -->|Request Info| M[Status: Pending Information]
+    M --> N[Email User]
+    N --> O[Wait for Response]
+    O --> L
+    
+    L -->|Reject| P[Status: Rejected]
+    P --> Q[Record Decision Reason]
+    Q --> R[Send Rejection Email]
+    R --> End1([Claim Closed])
+    
+    L -->|Approve| S[Status: Approved]
+    S --> T[Create Fulfillment Record]
+    T --> U[Match Repairer]
+    U --> V{Excess Required?}
+    V -->|Yes| W[Status: Pending Excess]
+    V -->|No| X[Status: Ready for Fulfillment]
+    W --> Y[Collect Excess Payment]
+    Y --> X
+    X --> Z[Schedule Appointment]
+    Z --> AA[Repairer Inspection]
+    AA --> AB{Inspection Result}
+    AB -->|Repairable| AC[Provide Quote]
+    AB -->|BER| AD[Issue Voucher]
+    AC --> AE{Quote Approved?}
+    AE -->|Yes| AF[Perform Repair]
+    AE -->|No| AG[Escalate to Claims Agent]
+    AG --> L
+    AF --> AH[Status: Fulfilled]
+    AD --> AH
+    AH --> AI[Close Claim]
+    AI --> End2([Claim Complete])
+
+    style Start fill:#3498db,color:#fff
+    style S fill:#2ecc71,color:#fff
+    style P fill:#e74c3c,color:#fff
+    style AH fill:#2ecc71,color:#fff
+    style End1 fill:#95a5a6,color:#fff
+    style End2 fill:#2ecc71,color:#fff
+                </div>
+            </div>
+        </div>
+
+        <div id="fulfillment-flow">
+            <h2>5. Fulfillment Orchestration Flow</h2>
+            <div class="description">
+                <p><strong>Overview:</strong> Detailed fulfillment workflow showing repairer assignment, inspection, and repair execution.</p>
+            </div>
+            <div class="diagram-container" data-diagram-name="fulfillment-flow">
+                <div class="download-toolbar">
+                    <button class="download-btn png" onclick="downloadDiagram(this, 'png')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        PNG
+                    </button>
+                    <button class="download-btn svg" onclick="downloadDiagram(this, 'svg')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        SVG
+                    </button>
+                    <button class="download-btn pdf" onclick="downloadDiagram(this, 'pdf')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        PDF
+                    </button>
+                </div>
+                <div class="mermaid">
+flowchart TD
+    Start([Approved Claim]) --> A{Check Fulfillment Type}
+    
+    A -->|Repair| B[Query Repairers by:<br/>- Device Category<br/>- Location<br/>- Capabilities]
+    A -->|Replace| C[Check Device Value]
+    A -->|Voucher| D[Generate Voucher Code]
+    
+    B --> E[Select Best Match]
+    E --> F[Assign to Repairer]
+    F --> G{Excess Payment Required?}
+    G -->|Yes| H[Status: Pending Excess]
+    G -->|No| I[Status: Ready]
+    H --> J[Send Payment Link]
+    J --> K[Wait for Payment]
+    K --> L{Payment Received?}
+    L -->|No| M[Send Reminder]
+    M --> K
+    L -->|Yes| N[Record Payment]
+    N --> I
+    
+    I --> O[Notify Repairer]
+    O --> P[Schedule Appointment]
+    P --> Q[Repairer Agent Login]
+    Q --> R[View Job Details]
+    R --> S[Conduct Inspection]
+    S --> T[Upload Inspection Photos]
+    T --> U{Diagnosis}
+    
+    U -->|Simple Repair| V[Perform Repair Immediately]
+    U -->|Complex Repair| W[Create Quote]
+    U -->|BER| X[Recommend Voucher]
+    
+    W --> Y[Submit Quote to Claims Agent]
+    Y --> Z{Quote Decision}
+    Z -->|Approved| V
+    Z -->|Rejected| AA[Return to Repairer]
+    AA --> U
+    
+    X --> AB[Claims Agent Reviews]
+    AB --> AC{Approve BER?}
+    AC -->|Yes| D
+    AC -->|No| AA
+    
+    V --> AD[Update Status: Repair Complete]
+    AD --> AE[Record Repair Costs]
+    AE --> AF[Customer Satisfaction Survey]
+    
+    C --> AG[Order Replacement Device]
+    AG --> AH[Arrange Delivery]
+    AH --> AI[Update Status: Replaced]
+    
+    D --> AJ[Send Voucher to Customer]
+    AJ --> AK[Update Status: Voucher Issued]
+    
+    AF --> End1([Fulfillment Complete])
+    AI --> End1
+    AK --> End1
+
+    style Start fill:#3498db,color:#fff
+    style End1 fill:#2ecc71,color:#fff
+    style X fill:#f39c12,color:#fff
+    style D fill:#9b59b6,color:#fff
+                </div>
+            </div>
+        </div>
+
+        <div id="service-request">
+            <h2>6. Service Request Flow</h2>
+            <div class="description">
+                <p><strong>Overview:</strong> Customer service inquiry workflow with AI chatbot support and human agent escalation.</p>
+            </div>
+            <div class="diagram-container" data-diagram-name="service-request">
+                <div class="download-toolbar">
+                    <button class="download-btn png" onclick="downloadDiagram(this, 'png')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        PNG
+                    </button>
+                    <button class="download-btn svg" onclick="downloadDiagram(this, 'svg')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        SVG
+                    </button>
+                    <button class="download-btn pdf" onclick="downloadDiagram(this, 'pdf')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        PDF
+                    </button>
+                </div>
+                <div class="mermaid">
+flowchart TD
+    Start([User Creates Request]) --> A[Select Category]
+    A --> B[Enter Subject & Details]
+    B --> C[Generate Reference Number<br/>SR-YYYY-XXXXXX]
+    C --> D[Create Service Request]
+    D --> E[Status: Open]
+    E --> F[AI Agent: Initial Response]
+    F --> G{Issue Resolved?}
+    
+    G -->|Yes| H[User Confirms Resolution]
+    H --> I[Status: Resolved]
+    I --> End1([Request Closed])
+    
+    G -->|No| J[Route to Human Agent]
+    J --> K{Agent Available?}
+    K -->|No| L[Add to Queue]
+    L --> M[Notify: Waiting]
+    M --> K
+    
+    K -->|Yes| N[Assign Agent]
+    N --> O[Agent Reviews Request]
+    O --> P[Status: In Progress]
+    P --> Q[Agent Sends Message]
+    Q --> R[User Receives Notification]
+    R --> S{User Responds?}
+    
+    S -->|Yes| T[User Sends Reply]
+    T --> U[Update last_activity_at]
+    U --> V[Agent Receives Notification]
+    V --> W{More Help Needed?}
+    W -->|Yes| Q
+    W -->|No| X[Agent Provides Solution]
+    
+    S -->|No| Y[Wait 24 hours]
+    Y --> Z{Still No Response?}
+    Z -->|Yes| AA[Send Reminder]
+    AA --> AB[Wait 48 hours]
+    AB --> AC{Still No Response?}
+    AC -->|Yes| AD[Auto-Close Request]
+    AC -->|No| S
+    Z -->|No| S
+    
+    X --> AE[User Confirms Resolution]
+    AE --> AF[Agent Marks Resolved]
+    AF --> AG[Status: Resolved]
+    AG --> AH[Record Resolution Time]
+    AH --> AI[Customer Satisfaction Rating]
+    AI --> End2([Request Complete])
+
+    style Start fill:#3498db,color:#fff
+    style F fill:#f39c12,color:#fff
+    style End1 fill:#2ecc71,color:#fff
+    style End2 fill:#2ecc71,color:#fff
+    style AD fill:#95a5a6,color:#fff
+                </div>
+            </div>
+        </div>
+
+        <div id="user-roles">
+            <h2>7. User Roles & Permissions</h2>
+            <div class="description">
+                <p><strong>Overview:</strong> Role hierarchy and permission structure showing access control across the system.</p>
+            </div>
+            <div class="diagram-container" data-diagram-name="user-roles">
+                <div class="download-toolbar">
+                    <button class="download-btn png" onclick="downloadDiagram(this, 'png')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        PNG
+                    </button>
+                    <button class="download-btn svg" onclick="downloadDiagram(this, 'svg')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        SVG
+                    </button>
+                    <button class="download-btn pdf" onclick="downloadDiagram(this, 'pdf')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        PDF
+                    </button>
+                </div>
+                <div class="mermaid">
+graph TB
+    subgraph "System Administration"
+        SA[System Admin<br/>Full System Access]
+        A[Admin<br/>Program Administrator]
+    end
+
+    subgraph "Retail Operations"
+        RA[Retail Agent<br/>Sales & Service]
+        CA[Commercial Agent<br/>Business Operations]
+        BA[Backoffice Agent<br/>Support Operations]
+        CON[Consultant<br/>Sales Specialist]
+    end
+
+    subgraph "Claims & Support"
+        CLA[Claims Agent<br/>Claims Processing]
+        COMP[Complaints Agent<br/>Complaint Management]
+    end
+
+    subgraph "Fulfillment"
+        REP[Repairer Agent<br/>Repair Network]
+    end
+
+    subgraph "End Users"
+        EU[End User<br/>Policy Holder]
+    end
+
+    subgraph "Permissions"
+        P1[Manage Programs]
+        P2[Manage Products]
+        P3[Manage Devices]
+        P4[Manage Users]
+        P5[Create Policies]
+        P6[View All Policies]
+        P7[Process Claims]
+        P8[Fulfill Claims]
+        P9[Handle Complaints]
+        P10[Service Requests]
+        P11[View Own Data]
+    end
+
+    SA --> P1
+    SA --> P2
+    SA --> P3
+    SA --> P4
+    SA --> P5
+    SA --> P6
+    SA --> P7
+    SA --> P8
+    SA --> P9
+    SA --> P10
+
+    A --> P5
+    A --> P6
+    A --> P7
+    A --> P8
+    A --> P9
+    A --> P10
+
+    RA --> P5
+    RA --> P6
+    RA --> P7
+    RA --> P10
+
+    CA --> P10
+    BA --> P10
+
+    CON --> P5
+    CON --> P6
+
+    CLA --> P6
+    CLA --> P7
+    CLA --> P10
+
+    COMP --> P6
+    COMP --> P9
+
+    REP --> P8
+
+    EU --> P11
+
+    style SA fill:#e74c3c,color:#fff
+    style A fill:#e67e22,color:#fff
+    style RA fill:#3498db,color:#fff
+    style CLA fill:#2ecc71,color:#fff
+    style COMP fill:#9b59b6,color:#fff
+    style REP fill:#f39c12,color:#fff
+    style EU fill:#95a5a6,color:#fff
+                </div>
+            </div>
+        </div>
+
+        <div id="data-flow">
+            <h2>8. Data Flow Architecture</h2>
+            <div class="description">
+                <p><strong>Overview:</strong> How data flows through the system from user action to database persistence and back.</p>
+            </div>
+            <div class="diagram-container" data-diagram-name="data-flow">
+                <div class="download-toolbar">
+                    <button class="download-btn png" onclick="downloadDiagram(this, 'png')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        PNG
+                    </button>
+                    <button class="download-btn svg" onclick="downloadDiagram(this, 'svg')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        SVG
+                    </button>
+                    <button class="download-btn pdf" onclick="downloadDiagram(this, 'pdf')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        PDF
+                    </button>
+                </div>
+                <div class="mermaid">
+flowchart LR
+    subgraph Client["Client Layer"]
+        UI[React Components]
+        TQ[TanStack Query<br/>Cache]
+        SUP[Supabase Client]
+    end
+
+    subgraph API["API Layer"]
+        AG[API Gateway]
+        JWT[JWT Verification]
+    end
+
+    subgraph Backend["Backend Layer"]
+        EF[Edge Functions]
+        RLS[RLS Policies]
+        DB[(PostgreSQL)]
+        ST[Storage Buckets]
+    end
+
+    subgraph External["External Services"]
+        AI[Lovable AI]
+        EM[Email Services]
+    end
+
+    UI -->|1. User Action| TQ
+    TQ -->|2. Check Cache| TQ
+    TQ -->|3. Cache Miss| SUP
+    SUP -->|4. HTTP Request<br/>+ JWT| AG
+    AG -->|5. Verify| JWT
+    JWT -->|6. Valid| EF
+    EF -->|7. Business Logic| EF
+    EF -->|8. External Call| AI
+    AI -->|9. AI Response| EF
+    EF -->|10. Query DB| RLS
+    RLS -->|11. Check Permissions<br/>has_role()| DB
+    DB -->|12. Filtered Data| RLS
+    RLS -->|13. Return Data| EF
+    EF -->|14. Upload Files| ST
+    EF -->|15. Send Emails| EM
+    EF -->|16. Response| AG
+    AG -->|17. JSON Response| SUP
+    SUP -->|18. Update Cache| TQ
+    TQ -->|19. Update UI| UI
+
+    style UI fill:#3498db,color:#fff
+    style DB fill:#2ecc71,color:#fff
+    style RLS fill:#e74c3c,color:#fff
+    style AI fill:#f39c12,color:#fff
+                </div>
+            </div>
+        </div>
+
+        <div id="customer-portal-flow">
+            <h2>9. Customer Portal User Flow</h2>
+            <div class="description">
+                <p><strong>Overview:</strong> Complete user journey for customers using the self-service portal, including claim submission, policy management, and support features.</p>
+            </div>
+            <div class="diagram-container" data-diagram-name="customer-portal-flow">
+                <div class="download-toolbar">
+                    <button class="download-btn png" onclick="downloadDiagram(this, 'png')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        PNG
+                    </button>
+                    <button class="download-btn svg" onclick="downloadDiagram(this, 'svg')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        SVG
+                    </button>
+                    <button class="download-btn pdf" onclick="downloadDiagram(this, 'pdf')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        PDF
+                    </button>
+                </div>
+                <div class="mermaid">
+flowchart TB
+    subgraph Entry["Portal Entry"]
+        L[Login Page<br/>/auth]
+        REG[Register]
+        PWR[Password Reset]
+    end
+
+    subgraph Dashboard["Customer Dashboard"]
+        DASH[Dashboard<br/>/dashboard]
+        PSUM[Policies Summary]
+        CSUM[Claims Summary]
+        ALERT[Alerts & Notifications]
+    end
+
+    subgraph ClaimWizard["New Claim Submission"]
+        CL1[Step 1: Select Policy<br/>/claim-submission]
+        CL2[Step 2: Choose Claim Type<br/>Breakdown/Damage/Theft]
+        CL3[Step 3: Upload Photos<br/>AI Damage Analysis]
+        CL4[Step 4: Describe Fault<br/>AI Suggestions]
+        CL5[Step 5: Upload Documents<br/>Receipt Analysis]
+        CLSUB[Submit Claim]
+        CLCONF[Confirmation<br/>/claim-status/:id]
+    end
+
+    subgraph ClaimTracking["Claim Tracking"]
+        HIST[Claims History<br/>/claims-history]
+        CDET[Claim Details<br/>/claim/:id]
+        STAT[Status Timeline]
+        DOCS[View Documents]
+        AI[AI Analysis Results]
+        FULFL[Fulfillment Progress]
+    end
+
+    subgraph PolicyMgmt["Policy Management"]
+        POLS[My Policies<br/>/policies]
+        PDET[Policy Details]
+        PDOCS[Policy Documents<br/>IPID, T&C, Schedule]
+        ITEMS[Covered Items]
+        RENEW[Renewal Info]
+    end
+
+    subgraph Payments["Payments"]
+        PAY[Payments<br/>/payments]
+        PHIST[Payment History]
+        PREM[Premium Payments]
+        EXC[Excess Payments]
+    end
+
+    subgraph Documents["Documents"]
+        DOCL[Documents<br/>/documents]
+        IPID[IPID Download]
+        TC[Terms & Conditions]
+        SCHED[Policy Schedule]
+        RECPT[Receipts]
+    end
+
+    subgraph Support["Support"]
+        SR[Service Request<br/>/service-request]
+        AICHAT[AI Support Chat]
+        ESC[Escalate to Agent]
+        COMP[File Complaint<br/>/complaints]
+    end
+
+    L --> DASH
+    REG --> DASH
+    PWR --> L
+    
+    DASH --> PSUM
+    DASH --> CSUM
+    DASH --> ALERT
+    
+    PSUM --> POLS
+    CSUM --> HIST
+    
+    POLS --> PDET
+    PDET --> PDOCS
+    PDET --> ITEMS
+    PDET --> RENEW
+    PDET --> CL1
+    
+    CL1 --> CL2
+    CL2 --> CL3
+    CL3 --> CL4
+    CL4 --> CL5
+    CL5 --> CLSUB
+    CLSUB --> CLCONF
+    CLCONF --> HIST
+    
+    HIST --> CDET
+    CDET --> STAT
+    CDET --> DOCS
+    CDET --> AI
+    CDET --> FULFL
+    
+    DASH --> PAY
+    PAY --> PHIST
+    PHIST --> PREM
+    PHIST --> EXC
+    
+    DASH --> DOCL
+    DOCL --> IPID
+    DOCL --> TC
+    DOCL --> SCHED
+    DOCL --> RECPT
+    
+    DASH --> SR
+    SR --> AICHAT
+    AICHAT --> ESC
+    DASH --> COMP
+
+    style L fill:#e74c3c,color:#fff
+    style DASH fill:#3498db,color:#fff
+    style CLSUB fill:#2ecc71,color:#fff
+    style CLCONF fill:#2ecc71,color:#fff
+    style AICHAT fill:#f39c12,color:#fff
+    style AI fill:#f39c12,color:#fff
+    style COMP fill:#9b59b6,color:#fff
+                </div>
+            </div>
+
+            <h3>Key Customer Journeys</h3>
+            <div class="description">
+                <p><strong>1. New Claim Submission (5-Step Wizard):</strong> Select Policy → Choose Type → Upload Photos (AI Analysis) → Describe Fault → Upload Documents → Submit</p>
+                <p><strong>2. View Policy Documents:</strong> Documents Page → Select Policy → Preview IPID/T&C/Schedule → Download</p>
+                <p><strong>3. Track Claim Progress:</strong> Claims History → Select Claim → View Status Timeline → View AI Analysis → Track Fulfillment</p>
+                <p><strong>4. Get Support:</strong> Service Request → Start AI Chat → Ask Question → Get Answer or Escalate</p>
+            </div>
+        </div>
+
+        <div class="legend">
+            <h3>Diagram Legend</h3>
+            <div class="legend-item" style="background: #3498db; color: white;">Primary Components</div>
+            <div class="legend-item" style="background: #2ecc71; color: white;">Success States</div>
+            <div class="legend-item" style="background: #e74c3c; color: white;">Security/Critical</div>
+            <div class="legend-item" style="background: #f39c12; color: white;">External Services</div>
+            <div class="legend-item" style="background: #9b59b6; color: white;">Voucher/Alternative Flow</div>
+            <div class="legend-item" style="background: #95a5a6; color: white;">Closed/Inactive</div>
+        </div>
+
+        <div class="metadata" style="margin-top: 60px; border-top: 2px solid #ecf0f1; padding-top: 20px;">
+            <strong>Document Generated:</strong> December 4, 2024<br>
+            <strong>Diagrams Created With:</strong> Mermaid.js<br>
+            <strong>Last Updated:</strong> December 4, 2024
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            },
+            er: {
+                useMaxWidth: true
+            },
+            sequence: {
+                useMaxWidth: true,
+                actorMargin: 50,
+                boxMargin: 10,
+                messageMargin: 35
+            }
+        });
+
+        // Download individual diagram
+        async function downloadDiagram(button, format) {
+            const container = button.closest('.diagram-container');
+            const diagramName = container.dataset.diagramName || 'diagram';
+            const mermaidDiv = container.querySelector('.mermaid');
+            const svgElement = mermaidDiv.querySelector('svg');
+            
+            if (!svgElement) {
+                alert('Diagram not rendered yet. Please wait and try again.');
+                return;
+            }
+
+            button.disabled = true;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="animate-spin"><circle cx="12" cy="12" r="10" stroke-dasharray="32" stroke-dashoffset="8"/></svg> Exporting...';
+
+            try {
+                if (format === 'svg') {
+                    downloadSVG(svgElement, diagramName);
+                } else if (format === 'png') {
+                    await downloadPNG(svgElement, diagramName);
+                } else if (format === 'pdf') {
+                    await downloadPDF(svgElement, diagramName);
+                }
+            } catch (error) {
+                console.error('Export error:', error);
+                alert('Export failed. Please try again.');
+            } finally {
+                button.disabled = false;
+                button.innerHTML = originalText;
+            }
+        }
+
+        // Download SVG
+        function downloadSVG(svgElement, name) {
+            const svgClone = svgElement.cloneNode(true);
+            svgClone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+            
+            // Add white background
+            const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            rect.setAttribute('width', '100%');
+            rect.setAttribute('height', '100%');
+            rect.setAttribute('fill', 'white');
+            svgClone.insertBefore(rect, svgClone.firstChild);
+            
+            const svgData = new XMLSerializer().serializeToString(svgClone);
+            const blob = new Blob([svgData], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${name}.svg`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        // Download PNG using html2canvas
+        async function downloadPNG(svgElement, name) {
+            const canvas = await svgToCanvas(svgElement);
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = `${name}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Download PDF using jsPDF
+        async function downloadPDF(svgElement, name) {
+            const { jsPDF } = window.jspdf;
+            const canvas = await svgToCanvas(svgElement);
+            
+            const imgWidth = canvas.width;
+            const imgHeight = canvas.height;
+            
+            // Calculate PDF dimensions (A4 landscape or portrait based on aspect ratio)
+            const isLandscape = imgWidth > imgHeight;
+            const pdf = new jsPDF({
+                orientation: isLandscape ? 'landscape' : 'portrait',
+                unit: 'px',
+                format: [imgWidth + 40, imgHeight + 40]
+            });
+            
+            pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 20, 20, imgWidth, imgHeight);
+            pdf.save(`${name}.pdf`);
+        }
+
+        // Convert SVG to Canvas
+        async function svgToCanvas(svgElement) {
+            return new Promise((resolve, reject) => {
+                const svgClone = svgElement.cloneNode(true);
+                svgClone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+                
+                // Get dimensions
+                const bbox = svgElement.getBBox();
+                const width = Math.max(svgElement.clientWidth || bbox.width, 800);
+                const height = Math.max(svgElement.clientHeight || bbox.height, 600);
+                
+                svgClone.setAttribute('width', width);
+                svgClone.setAttribute('height', height);
+                
+                // Add white background
+                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                rect.setAttribute('width', '100%');
+                rect.setAttribute('height', '100%');
+                rect.setAttribute('fill', 'white');
+                svgClone.insertBefore(rect, svgClone.firstChild);
+                
+                const svgData = new XMLSerializer().serializeToString(svgClone);
+                const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+                const url = URL.createObjectURL(svgBlob);
+                
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width * 2; // 2x for better quality
+                    canvas.height = height * 2;
+                    
+                    const ctx = canvas.getContext('2d');
+                    ctx.fillStyle = 'white';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.scale(2, 2);
+                    ctx.drawImage(img, 0, 0);
+                    
+                    URL.revokeObjectURL(url);
+                    resolve(canvas);
+                };
+                img.onerror = reject;
+                img.src = url;
+            });
+        }
+
+        // Download all diagrams
+        async function downloadAll(format) {
+            const containers = document.querySelectorAll('.diagram-container');
+            
+            for (const container of containers) {
+                const diagramName = container.dataset.diagramName || 'diagram';
+                const mermaidDiv = container.querySelector('.mermaid');
+                const svgElement = mermaidDiv.querySelector('svg');
+                
+                if (!svgElement) continue;
+                
+                try {
+                    if (format === 'svg') {
+                        downloadSVG(svgElement, diagramName);
+                    } else if (format === 'png') {
+                        await downloadPNG(svgElement, diagramName);
+                    } else if (format === 'pdf') {
+                        await downloadPDF(svgElement, diagramName);
+                    }
+                    // Small delay between downloads
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                } catch (error) {
+                    console.error(`Error exporting ${diagramName}:`, error);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
